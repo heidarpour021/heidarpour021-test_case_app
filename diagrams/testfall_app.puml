@@ -1,0 +1,59 @@
+@startuml test_case_management-class_diagram
+
+skinparam classAttributeIconSize 0
+title Test Case - Class Diagram
+
+class TestCase {
+    + id: str {readOnly}
+    + title: str
+    + description: str
+    + expected_result: str
+}
+
+class TestCaseResult {
+    + succeeded: bool
+    + message: str
+    + test_case: TestCase | None
+}
+
+class TestCaseService {
+    + test_cases: list[TestCase]
+    + next_id: int
+
+    + add_test_case(test_case: TestCase): TestCaseResult
+    + get_test_cases(): list[TestCase]
+}
+
+class TestCaseDialog {
+    + test_case_service: TestCaseService
+
+    + add_test_case(): None
+    + list_test_cases(): None
+    + show_menu(): None
+}
+
+class App {
+    + main(): None
+}
+
+class ConsoleHelper {
+    + clear_screen(): None
+    + pause(): None
+    + required_input(prompt: str): str
+}
+
+App ..> TestCaseService : skapar
+App ..> TestCaseDialog : skapar
+App ..> ConsoleHelper : använder
+
+TestCaseDialog --> "1" TestCaseService
+TestCaseDialog ..> TestCase : skapar
+TestCaseDialog ..> TestCaseResult : använder
+TestCaseDialog ..> ConsoleHelper : använder
+
+TestCaseService o-- "0..*" TestCase : lagrar
+TestCaseService ..> TestCaseResult : skapar
+
+TestCaseResult --> "0..1" TestCase
+
+@enduml
